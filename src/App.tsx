@@ -6,6 +6,7 @@ import { listNotes } from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 import { GraphQLResult } from '@aws-amplify/api-graphql';
 import { ListNotesQuery, Note } from './API';
+import { ListColumn } from './component/ListColumn';
 
 const initialFormState = { name: '', description: '' } as Note;
 
@@ -89,6 +90,7 @@ function App() {
           ))
         }
       </div>
+      <ListColumn />
       <AmplifySignOut />
     </div>
   );
