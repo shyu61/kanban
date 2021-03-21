@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import './App.css';
 import { API, Storage } from 'aws-amplify';
 import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
 import { listNotes } from './graphql/queries';
 import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
 import { GraphQLResult } from '@aws-amplify/api-graphql';
 import { ListNotesQuery, Note } from './API';
+import { ListColumn } from './component/ListColumn';
+import styled from 'styled-components';
 
 const initialFormState = { name: '', description: '' } as Note;
 
@@ -58,8 +59,8 @@ function App() {
   }
 
   return (
-    <div className="App">
-      <h1>My Notes App</h1>
+    <StyledContainer>
+      <h1>KANBAN</h1>
       <input
         onChange={e => setFormData({ ...formData, 'name': e.target.value })}
         placeholder="Note name"
@@ -75,23 +76,24 @@ function App() {
         onChange={handleChange}
       />
       <button onClick={createNote}>Create Note</button>
-      <div style={{marginBottom: 30}}>
-        {
-          notes.map(note => (
-            <div key={note.id || note.name}>
-              <h2>{note.name}</h2>
-              <p>{note.description}</p>
-              <button onClick={() => deleteNote(note)}>Delete note</button>
-              {note.image && (
-                <img src={note.image} alt="imagestorage" style={{width: 400}} />
-              )}
-            </div>
-          ))
-        }
-      </div>
+      <StyledListColumnArea>
+        <ListColumn notes={notes} deleteNote={deleteNote} />
+        {[...Array(8)].map((_, i) => (
+          <ListColumn index={i} deleteNote={deleteNote} />
+        ))}
+      </StyledListColumnArea>
       <AmplifySignOut />
-    </div>
+    </StyledContainer>
   );
 }
+
+const StyledContainer = styled.div`
+  text-align: center;
+`;
+
+const StyledListColumnArea = styled.div`
+  display: flex;
+  overflow-x: scroll;
+`;
 
 export default withAuthenticator(App);
