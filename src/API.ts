@@ -2,20 +2,21 @@
 /* eslint-disable */
 //  This file was automatically generated and should not be edited.
 
-export type CreateNoteInput = {
+export type CreateTicketInput = {
   id?: string | null,
   name: string,
   description?: string | null,
   image?: string | null,
+  ticketColumnId?: string | null,
 };
 
-export type ModelNoteConditionInput = {
+export type ModelTicketConditionInput = {
   name?: ModelStringInput | null,
   description?: ModelStringInput | null,
   image?: ModelStringInput | null,
-  and?: Array< ModelNoteConditionInput | null > | null,
-  or?: Array< ModelNoteConditionInput | null > | null,
-  not?: ModelNoteConditionInput | null,
+  and?: Array< ModelTicketConditionInput | null > | null,
+  or?: Array< ModelTicketConditionInput | null > | null,
+  not?: ModelTicketConditionInput | null,
 };
 
 export type ModelStringInput = {
@@ -58,35 +59,73 @@ export type ModelSizeInput = {
   between?: Array< number | null > | null,
 };
 
-export type Note = {
-  __typename: "Note",
+export type Ticket = {
+  __typename: "Ticket",
   id?: string,
   name?: string,
   description?: string | null,
   image?: string | null,
+  column?: Column,
   createdAt?: string,
   updatedAt?: string,
 };
 
-export type UpdateNoteInput = {
+export type Column = {
+  __typename: "Column",
+  id?: string,
+  name?: string,
+  tickets?: ModelTicketConnection,
+  createdAt?: string,
+  updatedAt?: string,
+};
+
+export type ModelTicketConnection = {
+  __typename: "ModelTicketConnection",
+  items?:  Array<Ticket | null > | null,
+  nextToken?: string | null,
+};
+
+export type UpdateTicketInput = {
   id: string,
   name?: string | null,
   description?: string | null,
   image?: string | null,
+  ticketColumnId?: string | null,
 };
 
-export type DeleteNoteInput = {
+export type DeleteTicketInput = {
   id?: string | null,
 };
 
-export type ModelNoteFilterInput = {
+export type CreateColumnInput = {
+  id?: string | null,
+  name: string,
+};
+
+export type ModelColumnConditionInput = {
+  name?: ModelStringInput | null,
+  and?: Array< ModelColumnConditionInput | null > | null,
+  or?: Array< ModelColumnConditionInput | null > | null,
+  not?: ModelColumnConditionInput | null,
+};
+
+export type UpdateColumnInput = {
+  id: string,
+  name?: string | null,
+};
+
+export type DeleteColumnInput = {
+  id?: string | null,
+};
+
+export type ModelTicketFilterInput = {
   id?: ModelIDInput | null,
   name?: ModelStringInput | null,
   description?: ModelStringInput | null,
   image?: ModelStringInput | null,
-  and?: Array< ModelNoteFilterInput | null > | null,
-  or?: Array< ModelNoteFilterInput | null > | null,
-  not?: ModelNoteFilterInput | null,
+  and?: Array< ModelTicketFilterInput | null > | null,
+  or?: Array< ModelTicketFilterInput | null > | null,
+  not?: ModelTicketFilterInput | null,
 };
 
 export type ModelIDInput = {
@@ -105,133 +144,327 @@ export type ModelIDInput = {
   size?: ModelSizeInput | null,
 };
 
-export type ModelNoteConnection = {
-  __typename: "ModelNoteConnection",
-  items?:  Array<Note | null > | null,
+export type ModelColumnFilterInput = {
+  id?: ModelIDInput | null,
+  name?: ModelStringInput | null,
+  and?: Array< ModelColumnFilterInput | null > | null,
+  or?: Array< ModelColumnFilterInput | null > | null,
+  not?: ModelColumnFilterInput | null,
+};
+
+export type ModelColumnConnection = {
+  __typename: "ModelColumnConnection",
+  items?:  Array<Column | null > | null,
   nextToken?: string | null,
 };
 
-export type CreateNoteMutationVariables = {
-  input?: CreateNoteInput,
-  condition?: ModelNoteConditionInput | null,
+export type CreateTicketMutationVariables = {
+  input?: CreateTicketInput,
+  condition?: ModelTicketConditionInput | null,
 };
 
-export type CreateNoteMutation = {
-  createNote?:  {
-    __typename: "Note",
+export type CreateTicketMutation = {
+  createTicket?:  {
+    __typename: "Ticket",
     id: string,
     name: string,
     description?: string | null,
     image?: string | null,
+    column?:  {
+      __typename: "Column",
+      id: string,
+      name: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     createdAt: string,
     updatedAt: string,
-  },
+  } | null,
 };
 
-export type UpdateNoteMutationVariables = {
-  input?: UpdateNoteInput,
-  condition?: ModelNoteConditionInput | null,
+export type UpdateTicketMutationVariables = {
+  input?: UpdateTicketInput,
+  condition?: ModelTicketConditionInput | null,
 };
 
-export type UpdateNoteMutation = {
-  updateNote?:  {
-    __typename: "Note",
+export type UpdateTicketMutation = {
+  updateTicket?:  {
+    __typename: "Ticket",
     id: string,
     name: string,
     description?: string | null,
     image?: string | null,
+    column?:  {
+      __typename: "Column",
+      id: string,
+      name: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     createdAt: string,
     updatedAt: string,
-  },
+  } | null,
 };
 
-export type DeleteNoteMutationVariables = {
-  input?: DeleteNoteInput,
-  condition?: ModelNoteConditionInput | null,
+export type DeleteTicketMutationVariables = {
+  input?: DeleteTicketInput,
+  condition?: ModelTicketConditionInput | null,
 };
 
-export type DeleteNoteMutation = {
-  deleteNote?:  {
-    __typename: "Note",
+export type DeleteTicketMutation = {
+  deleteTicket?:  {
+    __typename: "Ticket",
     id: string,
     name: string,
     description?: string | null,
     image?: string | null,
+    column?:  {
+      __typename: "Column",
+      id: string,
+      name: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     createdAt: string,
     updatedAt: string,
-  },
+  } | null,
 };
 
-export type GetNoteQueryVariables = {
+export type CreateColumnMutationVariables = {
+  input?: CreateColumnInput,
+  condition?: ModelColumnConditionInput | null,
+};
+
+export type CreateColumnMutation = {
+  createColumn?:  {
+    __typename: "Column",
+    id: string,
+    name: string,
+    tickets?:  {
+      __typename: "ModelTicketConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type UpdateColumnMutationVariables = {
+  input?: UpdateColumnInput,
+  condition?: ModelColumnConditionInput | null,
+};
+
+export type UpdateColumnMutation = {
+  updateColumn?:  {
+    __typename: "Column",
+    id: string,
+    name: string,
+    tickets?:  {
+      __typename: "ModelTicketConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type DeleteColumnMutationVariables = {
+  input?: DeleteColumnInput,
+  condition?: ModelColumnConditionInput | null,
+};
+
+export type DeleteColumnMutation = {
+  deleteColumn?:  {
+    __typename: "Column",
+    id: string,
+    name: string,
+    tickets?:  {
+      __typename: "ModelTicketConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type GetTicketQueryVariables = {
   id?: string,
 };
 
-export type GetNoteQuery = {
-  getNote?:  {
-    __typename: "Note",
+export type GetTicketQuery = {
+  getTicket?:  {
+    __typename: "Ticket",
     id: string,
     name: string,
     description?: string | null,
     image?: string | null,
+    column?:  {
+      __typename: "Column",
+      id: string,
+      name: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     createdAt: string,
     updatedAt: string,
-  },
+  } | null,
 };
 
-export type ListNotesQueryVariables = {
-  filter?: ModelNoteFilterInput | null,
+export type ListTicketsQueryVariables = {
+  filter?: ModelTicketFilterInput | null,
   limit?: number | null,
   nextToken?: string | null,
 };
 
-export type ListNotesQuery = {
-  listNotes?:  {
-    __typename: "ModelNoteConnection",
+export type ListTicketsQuery = {
+  listTickets?:  {
+    __typename: "ModelTicketConnection",
     items?:  Array< {
-      __typename: "Note",
+      __typename: "Ticket",
       id: string,
       name: string,
       description?: string | null,
       image?: string | null,
       createdAt: string,
       updatedAt: string,
-    } > | null,
+    } | null > | null,
     nextToken?: string | null,
-  },
+  } | null,
 };
 
-export type OnCreateNoteSubscription = {
-  onCreateNote?:  {
-    __typename: "Note",
+export type GetColumnQueryVariables = {
+  id?: string,
+};
+
+export type GetColumnQuery = {
+  getColumn?:  {
+    __typename: "Column",
+    id: string,
+    name: string,
+    tickets?:  {
+      __typename: "ModelTicketConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type ListColumnsQueryVariables = {
+  filter?: ModelColumnFilterInput | null,
+  limit?: number | null,
+  nextToken?: string | null,
+};
+
+export type ListColumnsQuery = {
+  listColumns?:  {
+    __typename: "ModelColumnConnection",
+    items?:  Array< {
+      __typename: "Column",
+      id: string,
+      name: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null > | null,
+    nextToken?: string | null,
+  } | null,
+};
+
+export type OnCreateTicketSubscription = {
+  onCreateTicket?:  {
+    __typename: "Ticket",
     id: string,
     name: string,
     description?: string | null,
     image?: string | null,
+    column?:  {
+      __typename: "Column",
+      id: string,
+      name: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     createdAt: string,
     updatedAt: string,
-  },
+  } | null,
 };
 
-export type OnUpdateNoteSubscription = {
-  onUpdateNote?:  {
-    __typename: "Note",
+export type OnUpdateTicketSubscription = {
+  onUpdateTicket?:  {
+    __typename: "Ticket",
     id: string,
     name: string,
     description?: string | null,
     image?: string | null,
+    column?:  {
+      __typename: "Column",
+      id: string,
+      name: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     createdAt: string,
     updatedAt: string,
-  },
+  } | null,
 };
 
-export type OnDeleteNoteSubscription = {
-  onDeleteNote?:  {
-    __typename: "Note",
+export type OnDeleteTicketSubscription = {
+  onDeleteTicket?:  {
+    __typename: "Ticket",
     id: string,
     name: string,
     description?: string | null,
     image?: string | null,
+    column?:  {
+      __typename: "Column",
+      id: string,
+      name: string,
+      createdAt: string,
+      updatedAt: string,
+    } | null,
     createdAt: string,
     updatedAt: string,
-  },
+  } | null,
+};
+
+export type OnCreateColumnSubscription = {
+  onCreateColumn?:  {
+    __typename: "Column",
+    id: string,
+    name: string,
+    tickets?:  {
+      __typename: "ModelTicketConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnUpdateColumnSubscription = {
+  onUpdateColumn?:  {
+    __typename: "Column",
+    id: string,
+    name: string,
+    tickets?:  {
+      __typename: "ModelTicketConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
+};
+
+export type OnDeleteColumnSubscription = {
+  onDeleteColumn?:  {
+    __typename: "Column",
+    id: string,
+    name: string,
+    tickets?:  {
+      __typename: "ModelTicketConnection",
+      nextToken?: string | null,
+    } | null,
+    createdAt: string,
+    updatedAt: string,
+  } | null,
 };

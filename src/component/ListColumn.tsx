@@ -1,21 +1,21 @@
 import React from 'react';
 import styled from 'styled-components';
-import { Ticket } from './Ticket';
-import { Note } from '../API';
+import { ColumnTicket } from './ColumnTicket';
+import { Ticket } from '../API';
 
 type Props = {
   index?: number;
-  notes?: Note[];
-  deleteNote: (note: Note) => void;
+  tickets?: Ticket[];
+  deleteTicket: (ticket: Ticket) => void;
 }
 
-export const ListColumn = ({ index, notes = [], deleteNote }: Props) => {
+export const ListColumn = ({ index, tickets = [], deleteTicket }: Props) => {
   return (
     <StyledContainer>
       <StyledColumnTitle>This is Title Area {index}</StyledColumnTitle>
       <StyledColumn>
-        {notes.map(note => (
-          <Ticket note={note} deleteNote={deleteNote} />
+        {tickets.map(ticket => (
+          <ColumnTicket ticket={ticket} deleteTicket={deleteTicket} />
         ))}
       </StyledColumn>
     </StyledContainer>

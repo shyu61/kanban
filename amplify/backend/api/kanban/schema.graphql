@@ -1,6 +1,13 @@
-type Note @model {
+type Ticket @model {
   id: ID!
   name: String!
   description: String
   image: String
+  column: Column @connection(name: "ColumnTickets")
+}
+
+type Column @model {
+  id: ID!
+  name: String!
+  tickets: [Ticket] @connection(name: "ColumnTickets")
 }

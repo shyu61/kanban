@@ -1,61 +1,61 @@
 import React, { useState, useEffect } from 'react';
 import { API, Storage } from 'aws-amplify';
 import { withAuthenticator, AmplifySignOut } from '@aws-amplify/ui-react';
-import { listNotes } from './graphql/queries';
-import { createNote as createNoteMutation, deleteNote as deleteNoteMutation } from './graphql/mutations';
+import { listTickets } from './graphql/queries';
+import { createTicket as createTicketMutation, deleteTicket as deleteTicketMutation } from './graphql/mutations';
 import { GraphQLResult } from '@aws-amplify/api-graphql';
-import { ListNotesQuery, Note } from './API';
+import { ListTicketsQuery, Ticket } from './API';
 import { ListColumn } from './component/ListColumn';
 import styled from 'styled-components';
 
-const initialFormState = { name: '', description: '' } as Note;
+const initialFormState = { name: '', description: '' } as Ticket;
 
 function App() {
-  const [notes, setNotes] = useState<Note[]>([]);
+  const [tickets, setTickets] = useState<(Ticket)[]>([]);
   const [formData, setFormData] = useState(initialFormState);
 
   useEffect(() => {
-    fetchNotes();
+    fetchTickets();
   }, []);
 
-  const fetchNotes = async () => {
-    const apiData = await API.graphql({ query: listNotes }) as GraphQLResult<ListNotesQuery>;
-    const notesFromAPI = apiData.data?.listNotes?.items;
-    if (!notesFromAPI) return;
-    await Promise.all(notesFromAPI.map(async note => {
-      if (!note)　return;
-      if (note.image) {
-        const image = await Storage.get(note.image) as string;
-        note.image = image;
+  const fetchTickets = async () => {
+    const apiData = await API.graphql({ query: listTickets }) as GraphQLResult<ListTicketsQuery>;
+    const ticketsFromAPI = apiData.data?.listTickets?.items?.filter(item => item != null) as Ticket[] | undefined;
+    if (!ticketsFromAPI) return;
+    await Promise.all(ticketsFromAPI.map(async ticket => {
+      if (!ticket)　return;
+      if (ticket.image) {
+        const image = await Storage.get(ticket.image) as string;
+        ticket.image = image;
       }
-      return note;
+      return ticket;
     }));
-    setNotes(notesFromAPI);
+    setTickets(ticketsFromAPI);
   }
 
-  const createNote = async () => {
+  const createTicket = async () => {
     if (!formData.name || !formData.description) return;
-    await API.graphql({ query: createNoteMutation, variables: { input: formData }});
+    await API.graphql({ query: createTicketMutation, variables: { input: formData }});
     if (formData.image) {
       const image = await Storage.get(formData.image) as string;
       formData.image = image;
     }
-    setNotes([ ...notes, formData ]);
+    setTickets([ ...tickets, formData ]);
     setFormData(initialFormState);
   }
 
-  const deleteNote = async ({ id }: Note) => {
-    const newNotesArray = notes.filter(note => note.id !== id);
-    setNotes(newNotesArray);
-    await API.graphql({ query: deleteNoteMutation, variables: { input: { id } }});
+  const deleteTicket = async ({ id }: Ticket) => {
+    const newTicketsArray = tickets.filter(ticket => ticket.id !== id);
+    setTickets(newTicketsArray);
+    await API.graphql({ query: deleteTicketMutation, variables: { input: { id } }});
   }
 
-  const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (!e.target.files) return;
     const file = e.target.files[0];
     setFormData({ ...formData, image: file.name });
     await Storage.put(file.name, file);
-    fetchNotes()
+    fetchTickets()
   }
 
   return (
@@ -63,23 +63,23 @@ function App() {
       <h1>KANBAN</h1>
       <input
         onChange={e => setFormData({ ...formData, 'name': e.target.value })}
-        placeholder="Note name"
+        placeholder="Ticket name"
         value={formData.name}
       />
       <input
         onChange={e => setFormData({ ...formData, 'description': e.target.value })}
-        placeholder="Note description"
+        placeholder="Ticket description"
         value={formData.description ?? ''}
       />
       <input
         type="file"
-        onChange={handleChange}
+        onChange={handleChangeFile}
       />
-      <button onClick={createNote}>Create Note</button>
+      <button onClick={createTicket}>Create Ticket</button>
       <StyledListColumnArea>
-        <ListColumn notes={notes} deleteNote={deleteNote} />
+        <ListColumn tickets={tickets} deleteTicket={deleteTicket} />
         {[...Array(8)].map((_, i) => (
-          <ListColumn index={i} deleteNote={deleteNote} />
+          <ListColumn index={i} deleteTicket={deleteTicket} />
         ))}
       </StyledListColumnArea>
       <AmplifySignOut />
