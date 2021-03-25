@@ -11,3 +11,7 @@ type Column @model {
   name: String!
   tickets: [Ticket] @connection(name: "ColumnTickets")
 }
+
+type Query {
+  
+}

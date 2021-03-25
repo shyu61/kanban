@@ -64,6 +64,13 @@ export const listColumns = /* GraphQL */ `
         name
         createdAt
         updatedAt
+        tickets {
+          items {
+            name
+            id
+            description
+          }
+        }
       }
       nextToken
     }
