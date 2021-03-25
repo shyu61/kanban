@@ -50,6 +50,7 @@ const StyledContainer = styled.div`
   margin-left: 12px;
   border: 2px dashed silver;
   border-radius: 6px;
+  text-align: center;
 
   &:hover {
     background: whitesmoke;

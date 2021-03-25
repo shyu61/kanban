@@ -24,6 +24,7 @@ const StyledContainer = styled.div`
   min-height: 40px;
   margin: 0 8px;
   background: white;
+  border-radius: 4px;
 `;
 
 const StyledXButton = styled.button`

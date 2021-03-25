@@ -113,7 +113,7 @@ function App() {
 }
 
 const StyledContainer = styled.div`
-  text-align: center;
+  padding: 15px;
 `;
 
 export default withAuthenticator(App);

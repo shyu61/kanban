@@ -3,6 +3,7 @@ import styled from 'styled-components';
 import { AddColumnArea } from './AddColumnArea';
 import { ColumnTicket } from './ColumnTicket';
 import { Ticket, Column } from '../API';
+import { XButtonIcon } from './XButtonIcon';
 
 type Props = {
   tickets?: Ticket[];
@@ -13,35 +14,38 @@ type Props = {
 
 export const ListColumn = ({ tickets = [], columns, deleteTicket, deleteColumn }: Props) => {
   return (
-    <StyledListColumnArea>
-      {columns.map(column => (
-        <StyledContainer key={column?.id}>
-          <StyledColumnTitle>name: {column?.name}, id: {column?.id}</StyledColumnTitle>
-          {column && (
-            <button onClick={() => deleteColumn(column)}>x</button>
-          )}
-          <StyledColumn>
-            {tickets.map(ticket => (
-              <ColumnTicket ticket={ticket} deleteTicket={deleteTicket} />
-            ))}
-            {column && column.tickets?.items?.map(ticket => (
-              ticket && (
-              <ColumnTicket ticket={ticket} deleteTicket={deleteTicket} />
-            )))}
-          </StyledColumn>
-        </StyledContainer>
-      ))}
+    <StyledContainer>
+      {columns.map((column: Column) => {
+        if (column === null) return <></>;
+        return (
+          <StyledListColumnArea key={column.id}>
+            <StyledColumnTitle>
+              <span>{column.name}</span>
+              <XButtonIcon onClick={() => deleteColumn(column)} />
+            </StyledColumnTitle>
+            <StyledColumn>
+              {tickets.map(ticket => (
+                <ColumnTicket ticket={ticket} deleteTicket={deleteTicket} />
+              ))}
+              {column.tickets?.items?.map(ticket => (
+                ticket && (
+                <ColumnTicket ticket={ticket} deleteTicket={deleteTicket} />
+              )))}
+            </StyledColumn>
+          </StyledListColumnArea>
+        )
+      })}
       <AddColumnArea />
-    </StyledListColumnArea>
+    </StyledContainer>
   )
 }
 
-const StyledListColumnArea = styled.div`
+const StyledContainer = styled.div`
   display: flex;
   overflow-x: scroll;
 `;
 
-const StyledContainer = styled.div`
+const StyledListColumnArea = styled.div`
   min-width: 450px;
   margin-left: 12px;
   background: silver;
@@ -49,8 +53,11 @@ const StyledContainer = styled.div`
 `;
 
 const StyledColumnTitle = styled.div`
-  padding: 6px;
-  border-bottom: 1px solid black;
+  display: flex;
+  padding: 15px;
+  position: relative;
+  font-size: 20px;
+  font-weight: bold;
 `;
 
 const StyledColumn = styled.div`
