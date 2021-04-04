@@ -1,14 +1,17 @@
-import React, { useState } from 'react';
+import React, { SetStateAction, useState } from 'react';
 import styled from 'styled-components';
 import { API } from 'aws-amplify';
 import { createColumn as createColumnMutation } from '../graphql/mutations';
 import { Column } from '../API';
 
-export const AddColumnArea = () => {
+type Props = {
+  columns: Column[];
+  setColumns: React.Dispatch<SetStateAction<Column[]>>;
+}
+export const AddColumnArea = ({ columns, setColumns }: Props) => {
   const initialFormColumnState = { name: '' } as Column;
 
   const [isOpen, setIsOpen] = useState(false);
-  const [columns, setColumns] = useState<Column[]>([]);
   const [formColumnData, setFormColumnData] = useState(initialFormColumnState);
 
   const createColumn = async () => {
@@ -81,6 +84,7 @@ const StyledButton = styled.button`
   padding: 6px 1px;
   background: ${({ primary }: { primary?: boolean }) => primary ? 'royalblue': 'silver'};
   font-size: 16px;
+  font-weight: bold;
   color: white;
   border: none;
   border-radius: 6px;

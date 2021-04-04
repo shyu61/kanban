@@ -1,6 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import { Ticket } from '../API';
+import { XButtonIcon } from './XButtonIcon';
 
 type Props = {
   ticket: Ticket;
@@ -9,8 +10,8 @@ type Props = {
 
 export const ColumnTicket = ({ ticket, deleteTicket }: Props) => {
   return (
-    <StyledContainer key={ticket.id || ticket.name}>
-      <StyledXButton onClick={() => deleteTicket(ticket)}>x</StyledXButton>
+    <StyledContainer key={ticket.id}>
+      <XButtonIcon onClick={() => deleteTicket(ticket)} />
       <p style={{color: '#0000cd'}}>{ticket.name}</p>
       <p>{ticket.description}</p>
       {ticket.image && (
@@ -22,9 +23,10 @@ export const ColumnTicket = ({ ticket, deleteTicket }: Props) => {
 
 const StyledContainer = styled.div`
   min-height: 40px;
-  margin: 0 8px;
+  margin: 0 12px;
   background: white;
-  border-radius: 4px;
+  border-radius: 6px;
+  position: relative;
 `;
 
 const StyledXButton = styled.button`
