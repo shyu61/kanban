@@ -28,6 +28,3 @@ const StyledContainer = styled.div`
   border-radius: 6px;
   position: relative;
 `;
-
-const StyledXButton = styled.button`
-`;

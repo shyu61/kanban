@@ -1,3 +1,4 @@
+import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 import React, { SetStateAction, useState } from 'react';
 import styled from 'styled-components';
 import { API } from 'aws-amplify';
@@ -5,28 +6,28 @@ import { createTicket as createTicketMutation } from '../graphql/mutations';
 import { Ticket } from '../API';
 
 type Props = {
-  key?: string;
-  setIsOpen: React.Dispatch<SetStateAction<boolean>>;
   tickets: (Ticket)[];
   setTickets: React.Dispatch<SetStateAction<Ticket[]>>;
+  columnId: string;
 }
 
-export const AddTicketArea = ({ key, setIsOpen, tickets, setTickets }: Props) => {
+export const AddTicketArea = ({ tickets, setTickets, columnId }: Props) => {
   const initialFormState = { name: '', description: '' } as Ticket;
 
+  const [isOpen, setIsOpen] = useState(false);
   const [formData, setFormData] = useState(initialFormState);
-  const [columnId, setColumnId] = useState<string>('');
 
   const createTicket = async () => {
-    if (!formData.name || !formData.description) return;
+    if (!formData.name) return;
     await API.graphql({ query: createTicketMutation, variables: { input: { ...formData, ticketColumnId: columnId }}});
     // if (formData.image) {
     //   const image = await Storage.get(formData.image) as string;
     //   formData.image = image;
     // }
-    setTickets([ ...tickets, formData ]);
+    const newTicket = { ...formData, column: { id: columnId }} as Ticket;
+    setTickets([ ...tickets, newTicket ]);
     setFormData(initialFormState);
-    setColumnId('');
+    setIsOpen(false);
   }
 
   // const handleChangeFile = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -38,25 +39,34 @@ export const AddTicketArea = ({ key, setIsOpen, tickets, setTickets }: Props) =>
   // }
 
   const handleCancel = () => {
+    setFormData(initialFormState);
     setIsOpen(false);
   }
 
   return (
-    <>
-    <StyledContainer key={key}>
-      <StyledInput placeholder="タイトルを入力..." />
-    </StyledContainer>
-      <StyledButtonContainer>
-        <StyledButton onClick={() => null} primary>Create</StyledButton>
-        <StyledButton onClick={handleCancel}>Cancel</StyledButton>
-      </StyledButtonContainer>
-    </>
+    isOpen ? (
+      <>
+      <StyledContainer>
+        <StyledInput
+          onChange={e => setFormData({ ...formData, 'name': e.target.value })}
+          placeholder="タイトルを入力..."
+          value={formData.name}
+        />
+      </StyledContainer>
+        <StyledButtonContainer>
+          <StyledButton onClick={createTicket} primary>Create</StyledButton>
+          <StyledButton onClick={handleCancel}>Cancel</StyledButton>
+        </StyledButtonContainer>
+      </>
+    ) : (
+      <StyledIcon onClick={() => setIsOpen(true)}><AddCircleOutlineOutlinedIcon />Add New Ticket</StyledIcon>
+    )
   )
 }
 
 const StyledContainer = styled.div`
   min-height: 40px;
-  margin: 0 12px;
+  margin: 12px 12px 0;
   background: white;
   border-radius: 6px;
 `;
@@ -89,6 +99,18 @@ const StyledButton = styled.button`
   border-radius: 6px;
 
   &:hover {
+    cursor: pointer;
+  }
+`;
+
+const StyledIcon = styled.div`
+  margin: 8px 12px;
+  padding: 8px;
+  text-align: center;
+
+  &:hover {
+    background: darkgray;
+    border-radius: 4px;
     cursor: pointer;
   }
 `;

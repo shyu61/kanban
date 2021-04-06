@@ -1,6 +1,5 @@
 import { API, Storage } from 'aws-amplify';
 import { GraphQLResult } from '@aws-amplify/api-graphql';
-import AddCircleOutlineOutlinedIcon from '@material-ui/icons/AddCircleOutlineOutlined';
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { AddColumnArea } from './AddColumnArea';
@@ -17,7 +16,6 @@ import { listTickets, listColumns } from '../graphql/queries';
 export const ListColumn = () => {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [columns, setColumns] = useState<Column[]>([]);
-  const [isOpen, setIsOpen] = useState(false);
 
   useEffect(() => {
     fetchTickets();
@@ -65,7 +63,7 @@ export const ListColumn = () => {
         return (
           <StyledListColumnArea key={column.id}>
             <StyledColumnTitle>
-              <span>{column.name}{column.id}</span>
+              <span>{column.name}</span>
               <XButtonIcon onClick={() => deleteColumn(column)} />
             </StyledColumnTitle>
             <StyledColumn>
@@ -73,9 +71,7 @@ export const ListColumn = () => {
                 if (ticket === null) return <></>;
                 return <ColumnTicket ticket={ticket} deleteTicket={deleteTicket} />;
               })}
-              {isOpen ? <AddTicketArea key={column.id} setIsOpen={setIsOpen} tickets={tickets} setTickets={setTickets} /> : (
-                <StyledIcon onClick={() => setIsOpen(true)}><AddCircleOutlineOutlinedIcon />Add New Ticket</StyledIcon>
-              )}
+              <AddTicketArea tickets={tickets} setTickets={setTickets} columnId={column.id ?? ''} />
             </StyledColumn>
           </StyledListColumnArea>
         )
@@ -109,15 +105,3 @@ const StyledColumn = styled.div`
   height: 700px;
   overflow-y: scroll;
 `
-
-const StyledIcon = styled.div`
-  margin: 8px 12px;
-  padding: 8px;
-  text-align: center;
-
-  &:hover {
-    background: darkgray;
-    border-radius: 4px;
-    cursor: pointer;
-  }
-`;

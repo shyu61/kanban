@@ -32,6 +32,12 @@ export const listTickets = /* GraphQL */ `
         name
         description
         image
+        column {
+          id
+          name
+          createdAt
+          updatedAt
+        }
         createdAt
         updatedAt
       }
