@@ -1,37 +1,104 @@
-import React from 'react';
+import { API, Storage } from 'aws-amplify';
+import { GraphQLResult } from '@aws-amplify/api-graphql';
+import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { Ticket } from './Ticket';
-import { Note } from '../API';
+import { AddColumnArea } from './AddColumnArea';
+import { AddTicketArea } from './AddTicketArea';
+import { Column, ListColumnsQuery, ListTicketsQuery, Ticket,  } from '../API';
+import { ColumnTicket } from './ColumnTicket';
+import { XButtonIcon } from './XButtonIcon';
+import {
+  deleteTicket as deleteTicketMutation,
+  deleteColumn as deleteColumnMutation,
+} from '../graphql/mutations';
+import { listTickets, listColumns } from '../graphql/queries';
 
-type Props = {
-  index?: number;
-  notes?: Note[];
-  deleteNote: (note: Note) => void;
-}
+export const ListColumn = () => {
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+  const [columns, setColumns] = useState<Column[]>([]);
 
-export const ListColumn = ({ index, notes = [], deleteNote }: Props) => {
+  useEffect(() => {
+    fetchTickets();
+    fetchColumns();
+  }, []);
+
+  const fetchColumns = async () => {
+    const apiData = await API.graphql({ query: listColumns }) as GraphQLResult<ListColumnsQuery>;
+    const columnsFromAPI = apiData.data?.listColumns?.items?.filter(item => item !== null) as Column[] | undefined;
+    if (!columnsFromAPI) return;
+    setColumns(columnsFromAPI);
+  }
+
+  const fetchTickets = async () => {
+    const apiData = await API.graphql({ query: listTickets }) as GraphQLResult<ListTicketsQuery>;
+    const ticketsFromAPI = apiData.data?.listTickets?.items?.filter(item => item != null) as Ticket[] | undefined;
+    if (!ticketsFromAPI) return;
+    await Promise.all(ticketsFromAPI.map(async ticket => {
+      if (!ticket)　return;
+      if (ticket.image) {
+        const image = await Storage.get(ticket.image) as string;
+        ticket.image = image;
+      }
+      return ticket;
+    }));
+    setTickets(ticketsFromAPI);
+  }
+
+  const deleteTicket = async ({ id }: Ticket) => {
+    const newTicketsArray = tickets.filter(ticket => ticket.id !== id);
+    setTickets(newTicketsArray);
+    await API.graphql({ query: deleteTicketMutation, variables: { input: { id } }});
+  }
+
+  const deleteColumn = async ({ id }: Column) => {
+    const newColumnsArray = columns.filter(column => column.id !== id);
+    setColumns(newColumnsArray);
+    await API.graphql({ query: deleteColumnMutation, variables: { input: { id } }});
+  }
+
   return (
     <StyledContainer>
-      <StyledColumnTitle>This is Title Area {index}</StyledColumnTitle>
-      <StyledColumn>
-        {notes.map(note => (
-          <Ticket note={note} deleteNote={deleteNote} />
-        ))}
-      </StyledColumn>
+      {columns.map((column: Column) => {
+        if (column === null) return <></>;
+        return (
+          <StyledListColumnArea key={column.id}>
+            <StyledColumnTitle>
+              <span>{column.name}</span>
+              <XButtonIcon onClick={() => deleteColumn(column)} />
+            </StyledColumnTitle>
+            <StyledColumn>
+              {tickets.filter(ticket => ticket?.column?.id === column.id).map(ticket => {
+                if (ticket === null) return <></>;
+                return <ColumnTicket ticket={ticket} deleteTicket={deleteTicket} />;
+              })}
+              <AddTicketArea tickets={tickets} setTickets={setTickets} columnId={column.id ?? ''} />
+            </StyledColumn>
+          </StyledListColumnArea>
+        )
+      })}
+      <AddColumnArea columns={columns} setColumns={setColumns} />
     </StyledContainer>
   )
 }
 
 const StyledContainer = styled.div`
-  min-width: 450px;
+  display: flex;
+  overflow-x: scroll;
+`;
+
+const StyledListColumnArea = styled.div`
+  min-width: 400px;
   margin-left: 12px;
-  background: gray;
+  background: silver;
   border-radius: 6px;
 `;
 
 const StyledColumnTitle = styled.div`
-  padding: 6px;
-  border-bottom: 1px solid black;
+  display: flex;
+  padding: 15px;
+  position: relative;
+  font-size: 20px;
+  font-weight: bold;
 `;
 
 const StyledColumn = styled.div`
